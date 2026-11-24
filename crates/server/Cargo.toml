@@ -3,6 +3,7 @@ name = "nori-sync-server"
 version = "0.1.0"
 edition.workspace = true
 publish.workspace = true
+license.workspace = true
 description = "The self-hosted nori sync server: every room in one process"
 
 [dependencies]

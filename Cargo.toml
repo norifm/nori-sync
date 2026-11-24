@@ -6,6 +6,7 @@ exclude = ["cloudflare"]
 [workspace.package]
 edition = "2024"
 publish = false
+license = "MIT"
 
 [workspace.dependencies]
 nori-sync-room = { path = "crates/room" }

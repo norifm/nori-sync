@@ -162,4 +162,4 @@ and its expiry, a meeting room's end, a jam room leaving nothing, a room unloade
 | `cloudflare` | The Worker and its Durable Object; its own Cargo workspace, built to WebAssembly |
 | `tools/conformance.sh` | Starts a shell and runs the suite against it |
 
-There is no license file yet: the owner chooses one.
+The license is MIT: see `LICENSE`.

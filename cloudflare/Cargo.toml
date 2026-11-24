@@ -3,6 +3,7 @@ name = "nori-sync-cloudflare"
 version = "0.1.0"
 edition = "2024"
 publish = false
+license = "MIT"
 description = "The nori sync server on Cloudflare: a Worker and one Durable Object per room"
 
 [lib]

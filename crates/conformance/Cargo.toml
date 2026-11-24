@@ -3,6 +3,7 @@ name = "nori-sync-conformance"
 version = "0.1.0"
 edition.workspace = true
 publish.workspace = true
+license.workspace = true
 description = "Checks a running nori sync server against PROTOCOL.md over real WebSockets"
 
 [dependencies]

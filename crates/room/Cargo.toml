@@ -3,6 +3,7 @@ name = "nori-sync-room"
 version = "0.1.0"
 edition.workspace = true
 publish.workspace = true
+license.workspace = true
 description = "The nori sync server's rooms: members, delivery, kinds, lifetimes, limits, time and the kept copy, platform-free"
 
 [dependencies]
