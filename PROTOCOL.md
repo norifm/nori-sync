@@ -61,7 +61,7 @@ A frame is at most `max_frame` bytes, tag included (65,536 by default, stated in
 | Tag | Name | Body after the tag | The server answers |
 |---|---|---|---|
 | `0x01` | `send_all` | `payload` | Nothing. Every other member gets a `message` |
-| `0x02` | `send_to` | `u16 member`, `payload` | Nothing. That member gets a `message`. Refused with `no_member` when no such member is in the room |
+| `0x02` | `send_to` | `u16 member`, `payload` | Nothing. That member gets a `message`. Refused with `no_member` when no such member is in the room, or when it is the sender |
 | `0x03` | `time` | `i64 t1`: the member's own clock, returned unchanged | `time` |
 | `0x04` | `kept_get` | nothing | `kept` |
 | `0x05` | `kept_put` | 32 bytes `secret`, `blob` | `done` (`0x05`) or `refused` |
@@ -167,7 +167,7 @@ Each admitted connection is told its limits in the `welcome`.
 | Frames per connection per minute | 240 | Over: `refused` `too_fast` with the wait until the minute ends. Twice over: closed with `too_fast` |
 | Bytes per connection per minute | 4 MiB | As for frames |
 | Members per room | 20 (2 in a meeting room) | Closed with `room_full` at connect |
-| New rooms per network address per minute | 30 | Closed with `too_many_rooms` at connect |
+| New rooms per network address per minute | 30 | Closed with `too_many_rooms` at connect. On Cloudflare each of its locations counts apart, so the limit is approximate |
 | The server's daily budget (Cloudflare's free plan) | | Closed with `daily_limit` at connect; resets at 00:00 UTC |
 
 Every binary frame a member sends counts against its per-minute limits, the refused ones too. The
@@ -190,7 +190,7 @@ still talk directly) and try again later.
 | 4004 | `room_closed` | close | A meeting room past its 5 minutes. Make a new pairing code |
 | 4005 | `too_many_rooms` | close | Too many rooms opened from this network address. Retry after a minute |
 | 4006 | `daily_limit` | close | The server has used its daily budget. Retry after 00:00 UTC |
-| 4007 | `unavailable` | close | The room could not be reached. Retry after a backoff |
+| 4007 | `unavailable` | close, or `refused` for a kept-copy request | The room or its store could not be reached. Retry after a backoff |
 | 4008 | `too_large` | `refused` | A frame over `max_frame`. The frame was dropped |
 | 4009 | `too_fast` | `refused`, then close | Over a per-minute limit. The frame was dropped; wait `retry_after_ms` |
 | 4010 | `wrong_secret` | `refused` | A `kept_put` or `kept_delete` with a secret that does not match |
