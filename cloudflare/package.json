@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "description": "Pins wrangler for building, running and deploying the Worker",
+  "devDependencies": {
+    "wrangler": "4.167.0"
+  }
+}

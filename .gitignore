@@ -5,3 +5,4 @@
 /cloudflare/node_modules
 /cloudflare/.tools
 /cloudflare/.wrangler
+/cloudflare/dist

@@ -17,6 +17,7 @@ cleanup() {
     kill "$server" 2>/dev/null || true
     wait "$server" 2>/dev/null || true
   fi
+  if [ -n "${NORI_SYNC_KEEP_LOG:-}" ]; then cp "$log" "$NORI_SYNC_KEEP_LOG"; fi
   rm -rf "$work"
 }
 trap cleanup EXIT
@@ -38,7 +39,7 @@ case "$shell" in
     server=$!
     ;;
   cloudflare)
-    (cd cloudflare && npm ci --silent --no-audit --no-fund && PATH="$PWD/.tools/bin:$PATH" npx wrangler build --env test >/dev/null)
+    (cd cloudflare && npm ci --silent --no-audit --no-fund)
     (cd cloudflare && exec npx wrangler dev --env test --local --ip 127.0.0.1 --port "$port" --show-interactive-dev-session=false) >"$log" 2>&1 &
     server=$!
     suite+=(--expect-unload)
@@ -46,7 +47,7 @@ case "$shell" in
   *) echo "unknown shell $shell" >&2; exit 2 ;;
 esac
 
-for _ in $(seq 1 600); do
+for _ in $(seq 1 1800); do
   if curl -fsS "http://127.0.0.1:$port/" >/dev/null 2>&1; then break; fi
   if ! kill -0 "$server" 2>/dev/null; then cat "$log" >&2; echo "the server did not start" >&2; exit 1; fi
   sleep 0.1
