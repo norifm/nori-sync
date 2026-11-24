@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="referrer" content="no-referrer">
+<title>Join the jam · nori</title>
+<style>
+:root { --page: #f3f2f6; --surface: #fdfdfe; --ink: #26262a; --quiet: rgb(38 38 42 / 0.62); --line: rgb(38 38 42 / 0.14); }
+@media (prefers-color-scheme: dark) {
+  :root { --page: #101015; --surface: #1b1b20; --ink: #ecebef; --quiet: rgb(236 235 239 / 0.62); --line: rgb(236 235 239 / 0.16); }
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px 16px;
+  background: var(--page); color: var(--ink); font: 16px/1.45 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { width: 100%; max-width: 400px; background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 32px 24px; text-align: center; }
+h1 { font: 600 28px/1.2 Literata, Georgia, "Times New Roman", serif; margin: 0 0 24px; }
+.button { display: block; width: 100%; border: 0; border-radius: 999px; padding: 14px; font: inherit; font-weight: 600; font-size: 17px;
+  background: var(--ink); color: var(--surface); text-decoration: none; cursor: pointer; }
+.button.quiet { background: transparent; color: var(--ink); border: 1px solid var(--line); margin-top: 12px; font-size: 16px; }
+p { color: var(--quiet); margin: 20px 0 0; font-size: 15px; }
+p a { color: inherit; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Join the jam</h1>
+  <section id="invite" hidden>
+    <a id="open" class="button" href="#">Open in nori</a>
+    <button id="copy" class="button quiet" type="button" hidden>Copy link</button>
+  </section>
+  <p id="broken" hidden>This invite link is incomplete. Ask the host to send it again.</p>
+  <p>No nori yet? Get it at <a id="get" href="https://norifm.com">norifm.com</a>.</p>
+</main>
+<script>
+(function () {
+  var get = document.getElementById("get").href;
+  var fragment = location.hash.slice(1);
+  var params = new URLSearchParams(fragment);
+  if (!params.get("s") || !params.get("k")) {
+    document.getElementById("broken").hidden = false;
+    return;
+  }
+  var open = document.getElementById("open");
+  document.getElementById("invite").hidden = false;
+  if (/Android/i.test(navigator.userAgent)) {
+    var intent = "intent://jam?" + fragment + "#Intent;scheme=nori;package=dev.nori.music;";
+    open.href = intent + "S.browser_fallback_url=" + encodeURIComponent(get) + ";end";
+    // Without a tap a browser may refuse to open an app; this one has no fallback, so the page and its
+    // button stay.
+    location.href = intent + "end";
+    return;
+  }
+  open.href = "nori://jam?" + fragment;
+  var copy = document.getElementById("copy");
+  if (!navigator.clipboard) return;
+  copy.hidden = false;
+  copy.addEventListener("click", function () {
+    navigator.clipboard.writeText(location.href).then(function () { copy.textContent = "Copied"; });
+  });
+})();
+</script>
+</body>
+</html>

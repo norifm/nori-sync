@@ -1,0 +1,15 @@
+[package]
+name = "nori-sync-server"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+description = "The self-hosted nori sync server: every room in one process"
+
+[dependencies]
+nori-sync-room.workspace = true
+tokio.workspace = true
+axum.workspace = true
+sha2.workspace = true
+
+[lints]
+workspace = true

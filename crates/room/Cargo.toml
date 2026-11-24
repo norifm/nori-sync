@@ -1,0 +1,13 @@
+[package]
+name = "nori-sync-room"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+description = "The nori sync server's rooms: members, delivery, kinds, lifetimes, limits, time and the kept copy, platform-free"
+
+[dependencies]
+serde.workspace = true
+sha2.workspace = true
+
+[lints]
+workspace = true
