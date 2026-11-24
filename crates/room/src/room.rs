@@ -28,7 +28,9 @@ pub struct Member {
 enum Pace {
     Within,
     /// Over a limit: the frame is dropped, refused once per window with the wait in ms.
-    Over { refuse: Option<u32> },
+    Over {
+        refuse: Option<u32>,
+    },
     /// Twice over: the connection is closed.
     Far,
 }

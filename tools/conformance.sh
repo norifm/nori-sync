@@ -2,6 +2,7 @@
 # Runs the conformance suite against one shell, started here with the short limits the checks expect,
 # and stops it afterwards.
 #   tools/conformance.sh self          the self-hosted program (cargo build)
+#   tools/conformance.sh docker        the self-hosted program's Docker image
 #   tools/conformance.sh cloudflare    the Worker under `wrangler dev` (local only, nothing deployed)
 # Extra arguments go to the suite (for example --only keep_alive,time).
 set -euo pipefail
@@ -12,7 +13,9 @@ work=$(mktemp -d "${TMPDIR:-/tmp}/nori-sync-conformance.XXXXXX")
 log="$work/server.log"
 port=$(python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1", 0)); print(s.getsockname()[1])')
 server=
+container=
 cleanup() {
+  if [ -n "$container" ]; then docker rm -f "$container" >/dev/null 2>&1 || true; fi
   if [ -n "$server" ]; then
     kill "$server" 2>/dev/null || true
     wait "$server" 2>/dev/null || true
@@ -22,7 +25,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# The limits the checks are written for; tools/../cloudflare/wrangler.toml's [env.test] holds the same.
+# The limits the checks are written for; cloudflare/wrangler.toml's [env.test] holds the same.
 export NORI_SYNC_FRAMES_PER_MINUTE=30
 export NORI_SYNC_MEETING_SECONDS=4
 export NORI_SYNC_MEETING_CLOSED_SECONDS=4
@@ -36,6 +39,13 @@ suite=(target/release/nori-sync-conformance "ws://127.0.0.1:$port" --events-log 
 case "$shell" in
   self)
     NORI_SYNC_BIND=127.0.0.1 NORI_SYNC_PORT=$port NORI_SYNC_DATA="$work/data" target/release/nori-sync-server >"$log" 2>&1 &
+    server=$!
+    ;;
+  docker)
+    docker build -q -t nori-sync-conformance . >/dev/null
+    container=nori-sync-conformance-$port
+    docker run -d --name "$container" -p "127.0.0.1:$port:8080" $(env | grep -o '^NORI_SYNC_[A-Z_]*' | sed 's/^/-e /') nori-sync-conformance >/dev/null
+    docker logs -f "$container" >"$log" 2>&1 &
     server=$!
     ;;
   cloudflare)

@@ -14,7 +14,14 @@ use crate::store::RoomKey;
 /// How long a closing connection waits for the other side's close frame.
 const CLOSING: Duration = Duration::from_secs(5);
 
-pub async fn run(mut socket: WebSocket, connect: Result<(RoomKey, Kind), Refusal>, address: String, rooms: mpsc::UnboundedSender<Event>, counts: Arc<Counts>, debug_events: bool) {
+pub async fn run(
+    mut socket: WebSocket,
+    connect: Result<(RoomKey, Kind), Refusal>,
+    address: String,
+    rooms: mpsc::UnboundedSender<Event>,
+    counts: Arc<Counts>,
+    debug_events: bool,
+) {
     let (room, kind) = match connect {
         Ok(connect) => connect,
         Err(refusal) => {

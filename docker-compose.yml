@@ -1,0 +1,20 @@
+# An example: the server on port 8080, its stored rooms in a named volume. Put a reverse proxy with TLS
+# in front of it (clients connect with wss://) and set NORI_SYNC_TRUST_PROXY=1 behind one.
+services:
+  nori-sync:
+    build: .
+    image: nori-sync
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - nori-sync-data:/data
+    environment:
+      NORI_SYNC_TRUST_PROXY: "0"
+      # The limits; unset ones keep their defaults (README.md).
+      # NORI_SYNC_MAX_MEMBERS: "20"
+      # NORI_SYNC_KEPT_SECONDS: "4838400"
+      # NORI_SYNC_APP_LINK_FINGERPRINTS: "AB:CD:..."
+
+volumes:
+  nori-sync-data:

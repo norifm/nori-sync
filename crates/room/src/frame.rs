@@ -285,11 +285,7 @@ impl<'a> Answer<'a> {
                 };
             }
             tag::DONE => Answer::Done(RequestKind::of(&[r.u8()?])),
-            tag::REFUSED => Answer::Refused {
-                request: RequestKind::of(&[r.u8()?]),
-                refusal: Refusal::from_code(r.u16()?)?,
-                retry_after_ms: r.u32()?,
-            },
+            tag::REFUSED => Answer::Refused { request: RequestKind::of(&[r.u8()?]), refusal: Refusal::from_code(r.u16()?)?, retry_after_ms: r.u32()? },
             _ => return None,
         };
         r.end().map(|_| answer)
