@@ -50,6 +50,8 @@ case "$shell" in
     ;;
   cloudflare)
     (cd cloudflare && npm ci --silent --no-audit --no-fund)
+    # Built before it starts, so the wait below covers starting, not a first build.
+    (cd cloudflare && npx wrangler deploy --dry-run --env test --outdir "$work/dry-run" >"$log" 2>&1) || { cat "$log" >&2; exit 1; }
     (cd cloudflare && exec npx wrangler dev --env test --local --ip 127.0.0.1 --port "$port" --show-interactive-dev-session=false) >"$log" 2>&1 &
     server=$!
     suite+=(--expect-unload)
@@ -62,4 +64,5 @@ for _ in $(seq 1 1800); do
   if ! kill -0 "$server" 2>/dev/null; then cat "$log" >&2; echo "the server did not start" >&2; exit 1; fi
   sleep 0.1
 done
+curl -fsS "http://127.0.0.1:$port/" >/dev/null 2>&1 || { cat "$log" >&2; echo "the server did not answer" >&2; exit 1; }
 "${suite[@]}" "$@"
