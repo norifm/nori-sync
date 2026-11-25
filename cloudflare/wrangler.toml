@@ -3,9 +3,10 @@ name = "nori-sync"
 main = "build/index.js"
 compatibility_date = "2026-11-20"
 
-# SET THIS: the address the server answers at, a domain on your Cloudflare account. Without it the Worker
-# answers only at nori-sync.<your account>.workers.dev.
-# routes = [{ pattern = "sync.example.com", custom_domain = true }]
+# The address the server answers at, a domain on the account it deploys to: nori's public server. To run
+# your own, change it to a domain on your account, or remove it to answer only at
+# nori-sync.<your account>.workers.dev.
+routes = [{ pattern = "sync.norifm.com", custom_domain = true }]
 
 [build]
 # worker-build is pinned with the worker crate (Cargo.toml) and installed into .tools on first build.

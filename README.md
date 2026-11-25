@@ -89,8 +89,8 @@ Without Docker: `cargo run --release -p nori-sync-server`.
 You need a Cloudflare account, Rust with the `wasm32-unknown-unknown` target
 (`rustup target add wasm32-unknown-unknown`) and Node.js.
 
-1. In `cloudflare/wrangler.toml`, set `routes` to a domain on your account (the line marked
-   **SET THIS**). Without it the server answers at `nori-sync.<account>.workers.dev`.
+1. In `cloudflare/wrangler.toml`, change `routes` to a domain on your account. It names nori's public
+   server, `sync.norifm.com`. Without `routes` the server answers at `nori-sync.<account>.workers.dev`.
 2. Optionally set the limits under `[vars]`.
 3. Deploy:
 
